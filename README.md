@@ -1,31 +1,48 @@
-# Structural Analysis and GD&T of Celvics Component
+# Analytical Derivations and Structural Calculations
 
-## 1. Project Overview
-This repository contains the digital geometric definition, ASME Y14.5-2018 GD&T specifications, and Finite Element Analysis (FEA) results for the structural Celvics component.
+This document outlines the known FEA parameters and the derived mechanical calculations for the ASTM A36 Celvics component under a static 5000 N load.
 
-* **Author:** Mohammad Maawiz
-* **Date:** July 2026
-* **CAD/CAE Stack:** PTC Creo (2D Drafting), Siemens NX (3D Modeling), Ansys (Static Structural FEA)
+## 1. Known System Parameters
+* **Component Volume ($V$):** $1.5342 \times 10^{-5} \text{ m}^3$
+* **Component Mass ($m$):** $0.12044 \text{ kg}$
+* **Applied Force ($F$):** $5000 \text{ N}$
+* **Max Deformation ($\delta$):** $3.324 \times 10^{-4} \text{ m}$
+* **Max von-Mises Stress ($\sigma_{max}$):** $327.06 \times 10^6 \text{ Pa}$
+* **Material Yield Strength ($\sigma_y$):** $250 \times 10^6 \text{ Pa}$
 
-## 2. Material Definition
-* **Material:** ASTM A36 Structural Steel
-* **Density:** 7850 kg/m³
-* **Young's Modulus:** 200 GPa 
-* **Poisson's Ratio:** 0.3
-* **Yield Strength:** 250 MPa 
-* **Ultimate Tensile Strength:** 460 MPa 
+## 2. Derived Physical Properties
 
-## 3. GD&T and Tolerancing
-* **Standard:** ASME Y14.5-2018
-* **Datum Reference Frame:** Datums A, B, and C
-* **Tolerances:** Unspecified linear dimensions X.X = ±0.5 mm, X.XX = ±0.1 mm; Angles = ±0.5°.
-* **Feature Controls:** Position within 0.1 to A, B, C; Profile of a surface within 0.1 to A, B; Circular runout within 0.1 to B.
+### 2.1 Volumetric Density ($\rho$)
+Verification of the material assignment using mass and volume.
+$$\rho = \frac{m}{V}$$
+$$\rho = \frac{0.12044}{1.5342 \times 10^{-5}} = 7850.34 \text{ kg/m}^3$$
 
-## 4. FEA Setup & Results
-* **Mesh:** 11,578 nodes, 6,182 elements
-* **Boundary Condition:** Fixed support at the base face.
-* **Loading:** 5000 N static force in the +Y direction.
-* **Maximum von-Mises Stress:** 327.06 MPa
-* **Maximum Total Deformation:** 0.3324 mm
-* **Maximum Equivalent Elastic Strain:** 0.0017379 m/m
-* **Analysis Status:** Failed (Yield strength exceeded).
+## 3. Derived Mechanical Behavior
+
+### 3.1 Global Structural Stiffness ($k$)
+Determining the effective spring constant of the component along the axis of loading.
+$$k = \frac{F}{\delta}$$
+$$k = \frac{5000}{3.324 \times 10^{-4}} = 1.504 \times 10^7 \text{ N/m}$$
+
+### 3.2 Total Strain Energy ($U$)
+Calculating the internal work done on the component, assuming linear elastic behavior prior to yielding.
+$$U = \frac{1}{2} F \delta$$
+$$U = 0.5 \times 5000 \times (3.324 \times 10^{-4}) = 0.831 \text{ J}$$
+
+## 4. Failure Analysis & Redesign Derivations
+
+### 4.1 Factor of Safety (FoS)
+$$FoS = \frac{\sigma_y}{\sigma_{max}}$$
+$$FoS = \frac{250 \times 10^6}{327.06 \times 10^6} = 0.764$$
+*Conclusion: Plastic deformation occurs at the stress concentration because FoS < 1.0.*
+
+### 4.2 Derived Effective Load-Bearing Area ($A_{eff}$)
+Calculating the current theoretical cross-section absorbing the peak stress.
+$$A_{eff} = \frac{F}{\sigma_{max}}$$
+$$A_{eff} = \frac{5000}{327.06 \times 10^6} = 1.528 \times 10^{-5} \text{ m}^2 = 15.28 \text{ mm}^2$$
+
+### 4.3 Required Area for Target Safety Factor ($A_{req}$)
+Deriving the necessary effective area in the failure zone to achieve a standard FoS of 1.5.
+$$A_{req} = \frac{F \times 1.5}{\sigma_y}$$
+$$A_{req} = \frac{5000 \times 1.5}{250 \times 10^6} = 3.0 \times 10^{-5} \text{ m}^2 = 30.0 \text{ mm}^2$$
+*Conclusion: The local geometry in the failure zone must be reinforced to roughly double its current effec
